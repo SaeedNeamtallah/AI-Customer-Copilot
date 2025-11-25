@@ -1,0 +1,27 @@
+services:
+  vector_db:
+    image: pgvector/pgvector:0.8.1-pg18-trixie
+    container_name: vector-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: ${VECTOR_PGUSER}
+      POSTGRES_PASSWORD: ${VECTOR_PGPASSWORD}
+      POSTGRES_DB: ${VECTOR_PGDB}
+    volumes:
+      - vector_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${VECTOR_PGUSER} -d ${VECTOR_PGDB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  vector_data:
