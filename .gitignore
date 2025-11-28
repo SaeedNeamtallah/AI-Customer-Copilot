@@ -14,12 +14,6 @@ venv/
 env/
 ENV/
 .venv
-
-# Environment Variables
-.env
-.env.local
-.env.*.local
-
 # IDE
 .vscode/
 project_idea/
