@@ -2,6 +2,12 @@
 
 A robust Retrieval-Augmented Generation (RAG) system built with FastAPI that enables document upload, intelligent processing, vector-based similarity search, and AI-powered answer generation. Upload files, automatically process them into searchable chunks with embeddings, store in PostgreSQL with pgvector and Qdrant vector database, and retrieve contextual answers powered by LLMs for your AI applications.
 
+[![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.118.0-009688.svg)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18.0-336791.svg)](https://www.postgresql.org/)
+[![pgvector](https://img.shields.io/badge/pgvector-0.8.1-orange.svg)](https://github.com/pgvector/pgvector)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
+
 ## 🏗️ Architecture Overview
 
 ### Core Components
@@ -40,8 +46,7 @@ A robust Retrieval-Augmented Generation (RAG) system built with FastAPI that ena
                         └─────────────────┘
 ```
 
-### Data Flow 
-
+### Data Flow
 
 1. **Document Upload** → File validation → Unique naming → Project storage
 2. **Document Processing** → Content extraction → Text chunking → Metadata preservation
@@ -84,11 +89,13 @@ The system uses a **Factory Pattern** for extensible provider management:
 - **PDF Processing**: PyMuPDF (FitzPDF) for efficient PDF extraction
 - **Data Validation**: Pydantic v2 with custom validators
 - **File Handling**: aiofiles for async I/O operations
+- **Task Queue**: Celery with Redis for background processing
+- **Monitoring**: Prometheus metrics with starlette-exporter
 - **Containerization**: Docker & Docker Compose
-- **Python Version**: 3.12+
-- **Additional Libraries**: asyncpg, sqlalchemy, alembic, aiofiles, python-dotenv, python-multipart, qdrant-client, openai, cohere, langchain
+- **Python Version**: 3.12+ / 3.13
+- **Additional Libraries**: asyncpg, sqlalchemy, alembic, aiofiles, python-dotenv, python-multipart, qdrant-client, openai, cohere, langchain, motor, redis, flower
 
-## 📁 Project Structure 
+## 📁 Project Structure
 
 ```text
 src/
@@ -171,11 +178,10 @@ src/
         └── {project_id}/            # Project-specific directories
 
 docker/
-├── docker-compose.yml               # PostgreSQL + MongoDB services
-├── .env                             # Database credentials
+├── docker-compose.yml               # PostgreSQL + pgvector service
+├── .env                             # Database credentials (not committed)
 ├── DATABASE_CONNECTIONS.md          # Connection guide for DBeaver/pgAdmin
-├── QUICK_REFERENCE.txt              # Quick reference card
-└── postgres-data/                   # PostgreSQL persistent storage
+└── QUICK_REFERENCE.txt              # Quick reference card
 
 .gitignore                          # Root gitignore
 README.md                           # This file
@@ -371,7 +377,7 @@ Create a `.env` file in the `src/` directory with the following variables (see `
 
 ### Prerequisites
 
-- Python 3.12+
+- Python 3.12+ (or 3.13)
 - Docker & Docker Compose
 - Git
 - PostgreSQL client (optional, for direct database access)
@@ -382,7 +388,7 @@ Create a `.env` file in the `src/` directory with the following variables (see `
 
    ```bash
    git clone https://github.com/SaeedNeamtallah/AI-Customer-Copilot.git
-   cd Rag-System-Project
+   cd AI-Customer-Copilot
    ```
 
 2. **Create and activate virtual environment:**
@@ -404,30 +410,33 @@ Create a `.env` file in the `src/` directory with the following variables (see `
    pip install -r requirements.txt
    ```
 
-4. **Start PostgreSQL with Docker Compose:**
+4. **Configure environment variables:**
+
+   ```bash
+   # Create .env file in src/ directory
+   cp .env.example .env
+   # Edit .env with your API keys and database credentials
+   ```
+
+5. **Start PostgreSQL with Docker Compose:**
 
    ```bash
    cd ../docker
+   # Create .env file for Docker (see docker/.env.example)
    docker-compose up -d
    ```
 
-5. **Run database migrations:**
+6. **Run database migrations:**
 
    ```bash
    cd ../src/models/db_schemas/rag
    alembic upgrade head
    ```
 
-6. **Create `.env` file in src/:**
-
-   ```bash
-   cd ../../../
-   # Edit the environment variables as shown in Configuration section
-   ```
-
 7. **Run the application:**
 
    ```bash
+   cd ../../../
    uvicorn main:app --reload --host 0.0.0.0 --port 8000
    ```
 
