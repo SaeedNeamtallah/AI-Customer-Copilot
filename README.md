@@ -381,7 +381,7 @@ Create a `.env` file in the `src/` directory with the following variables (see `
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/SaeedNeamtallah/Rag-System-Project.git
+   git clone https://github.com/SaeedNeamtallah/AI-Customer-Copilot.git
    cd Rag-System-Project
    ```
 
