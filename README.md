@@ -382,7 +382,7 @@ Create a `.env` file in the `src/` directory with the following variables (see `
 
    ```bash
    git clone https://github.com/SaeedNeamtallah/AI-Customer-Copilot.git
-   cd Rag-System-Project
+   cd AI-Customer-Copilot
    ```
 
 2. **Create and activate virtual environment:**
